@@ -5,7 +5,6 @@
 
 # In[45]:
 
-
 # load yolov3 model and perform object detection
 # based on https://github.com/experiencor/keras-yolo3
 import numpy as np
@@ -19,7 +18,8 @@ import pandas as pd
 import os
 import math
 
-directory_1 = "/Users/august/Documents/EITN35_AIQ"
+#directory_1 = "/Users/august/Documents/EITN35_AIQ"
+directory_1 = "../EITN35_Resources/"
 os.chdir(directory_1)
 
 
@@ -190,7 +190,7 @@ def draw_boxes(filename, v_boxes, v_labels, v_scores):
         label = "%s (%.3f)" % (v_labels[i], v_scores[i])
         pyplot.text(x1, y1, label, color='white')
     # show the plot
-    pyplot.show()
+    #pyplot.show()
 
 
 # load yolov3 model
@@ -334,8 +334,8 @@ os.chdir(directory_2)
 # lf_memory = pd.DataFrame(0,columns=['Label','Middle'],index=range(10))
 
 
-for i in range(23):  # len(os.listdir(directory_2)) #7
-    photo_filename = 'frame_' + str(i + 8) + '.jpg'
+for photo_filename in os.listdir(directory_2):
+    #photo_filename = 'frame_' + str(i + 8) + '.jpg'
     # define our new photoc
     # photo_filename = 'man_on_scooter.jpg'
     # load and prepare image
