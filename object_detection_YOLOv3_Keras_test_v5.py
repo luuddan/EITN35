@@ -398,6 +398,8 @@ for photo_filename in os.listdir(directory_3):
             directory_3 + 'unlabeled_images/' + photo_filename
         )
 
+
+
     #print("THIS IS ANNOTATIONS DF")
     print(str(annotation_df))
 
@@ -407,6 +409,12 @@ for photo_filename in os.listdir(directory_3):
 #Make CSV-file from auto-annotations
 annotation_df.to_csv('/Users/august/Documents/EITN35_AIQ/Annotations-export_YOLO_auto.csv', index=False, header=True)
 
+for labeled in os.listdir(directory_3):
+    if not labeled.endswith('jpg'): continue
+    os.rename(
+        directory_3 + labeled,
+        directory_3 + 'autolabeled_images/' + labeled
+    )
 
 # In[90]:
 
