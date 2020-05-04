@@ -26,7 +26,7 @@ while count < noExtract:
     index = rand.randint(1, len(os.listdir(directory_2)))
     file_list = os.listdir(directory_2)
 
-    if PRINT_DEBUG : print(str(file_list[index]) + " exported to test_set...")
+    #if PRINT_DEBUG : print(str(file_list[index]) + " exported to test_set...")
 
     os.rename(
         directory_2 + str(file_list[index]),
