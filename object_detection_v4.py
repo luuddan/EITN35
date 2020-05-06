@@ -3,8 +3,6 @@
 
 # Object Detection With YOLOv3 in Keras
 
-# In[45]:
-
 # load yolov3 model and perform object detection
 # based on https://github.com/experiencor/keras-yolo3
 import numpy as np
@@ -17,6 +15,8 @@ from matplotlib.patches import Rectangle
 import pandas as pd
 import os
 import math
+#import tensorflow.compat.v1 as tf
+#tf.disable_v2_behavior()
 
 #directory_1 = "/Users/august/Documents/EITN35_AIQ"
 directory_1 = "../EITN35_Resources/"
@@ -310,24 +310,29 @@ def check_new_object(v_labels, v_boxes, v_scores, frames_memory):
     # print(frames_memory)
     return temp_counter
 
-
-# In[81]:
-
-
 frames_memory = pd.DataFrame(data=0, columns=range(10), index=['F1', 'F2', 'F3', 'F4', 'F5'])
 # Ladda in ett objekt
 frames_memory
 
-# In[82]:
-
-
 big_counter = pd.DataFrame(0, columns=['Number'], index=labels)
 
-# In[88]:
-
-
+#Dir to be iterated
 directory_2 = "/Users/august/Documents/EITN35_AIQ/video_files/frames/"
+directory_3 = "/Users/august/Documents/EITN35_AIQ/video_files/test_set/"
 os.chdir(directory_2)
+
+# Create "unlabeled_images" folder if it does not exist
+try:
+    if not os.path.exists('unlabeled_images'):
+        os.makedirs('unlabeled_images')
+    if not os.path.exists('autolabeled_images'):
+        os.makedirs('autolabeled_images')
+except OSError:
+    print('Error: Creating directory of data')
+
+#MÅSTE GÖRAS LÄNGRE OM VI HITTAR MER ÄN ETT OBJEKT I VARJE BILD, GÖR HELLRE FÖR LÅNG OCH DROPPA
+annotation_df = pd.DataFrame(data=0,index=np.arange(len(os.listdir(directory_3))),columns="image xmin ymin xmax ymax label".split())
+index = 0
 
 # Store found objects and their positions from previous frame in vector.
 # When new object found compare type and position, then decide to count or not
@@ -335,6 +340,7 @@ os.chdir(directory_2)
 
 
 for photo_filename in os.listdir(directory_2):
+    if not photo_filename.endswith('jpg'):continue
     #photo_filename = 'frame_' + str(i + 8) + '.jpg'
     # define our new photoc
     # photo_filename = 'man_on_scooter.jpg'
@@ -361,6 +367,19 @@ for photo_filename in os.listdir(directory_2):
     # get the details of the detected objects
     v_boxes, v_labels, v_scores = get_boxes(boxes, labels, class_threshold)
 
+    contains_person = False
+    #load dataframe for csv export
+    for i in range(len(v_labels)):
+        if v_labels[i] == 'person':
+            annotation_df['image'][index] = photo_filename
+            annotation_df['xmin'][index] = v_boxes[i].xmin
+            annotation_df['ymin'][index] = v_boxes[i].ymin
+            annotation_df['xmax'][index] = v_boxes[i].xmax
+            annotation_df['ymax'][index] = v_boxes[i].ymax
+            annotation_df['label'][index] = v_labels[i]
+            index += 1
+            contains_person = True #Om vi har hittat en instance av person flytta inte file till unlabled_files
+
     # summarize what we found
     temp_2_counter = check_new_object(v_labels, v_boxes, v_scores, frames_memory)
 
@@ -371,6 +390,23 @@ for photo_filename in os.listdir(directory_2):
     # draw what we found
     draw_boxes(photo_filename, v_boxes, v_labels, v_scores)
     print(str(big_counter))
+
+    #move files that couldn't be labeled with YOLO
+    if (not contains_person):
+        os.rename(
+            directory_3 + photo_filename,
+            directory_3 + 'unlabeled_images/' + photo_filename
+        )
+
+    #print("THIS IS ANNOTATIONS DF")
+    print(str(annotation_df))
+
+
+
+
+#Make CSV-file from auto-annotations
+annotation_df.to_csv('/Users/august/Documents/EITN35_AIQ/Annotations-export_YOLO_auto.csv', index=False, header=True)
+
 
 # In[90]:
 
