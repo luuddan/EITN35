@@ -18,10 +18,8 @@ import gc #garbage collector for cleaning deleted data from memory
 # In[2]:
 
 
-#train_dir = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/train_images/'
-#test_dir = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/test_images/'
-train_dir = '/Users/august/PycharmProjects/EITN35_Resources/temp_train/'
-test_dir = '/Users/august/PycharmProjects/EITN35_Resources/temp_test/'
+train_dir = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/Small_train_set/'
+test_dir = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/Small_test_set/'
 
 #rain_person = [train_dir+'{}'.format(i) for i in os.listdir(train_dir) if 'persons_1' in i]  #get person images
 #rain_dogs = [train_dir+'{}'.format(i) for i in os.listdir(train_dir) if 'dogs_1' in i]  #get dog images
@@ -56,8 +54,8 @@ for ima in train_imgs[0:4]:
 
 #Lets declare our image dimensions
 #we are using coloured images. 
-nrows = 416
-ncolumns = 416
+nrows = 640
+ncolumns = 360
 channels = 3  #change to 1 if you want to use grayscale image
 
 #A function to read and process the images to an acceptable format for our model
@@ -94,7 +92,7 @@ class_names = ['empty', 'person', 'dogs', 'bikes']
 
 # In[6]:
 
-
+print('reading dataset...')
 X, y = read_and_process_image(train_imgs)
 X_test, y_test = read_and_process_image(test_imgs)
 
@@ -174,7 +172,7 @@ batch_size = 32
 
 
 #from keras import models
-from keras import optimizers
+#from keras import optimizers
 from tensorflow.keras import models, layers
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array, load_img
@@ -190,7 +188,7 @@ model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(128, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Flatten())
-model.add(layers.Dropout(0.5))  #Dropout for regularization
+model.add(layers.Dropout(0.4))  #Dropout for regularization
 model.add(layers.Dense(512, activation='relu'))
 model.add(layers.Dense(4))  #Sigmoid function at the end because we have just two classes
 
@@ -207,7 +205,7 @@ model.summary()
 
 #We'll use the RMSprop optimizer with a learning rate of 0.0001
 #We'll use binary_crossentropy loss because its a binary classification
-model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), optimizer='adam', metrics=['acc'])
+model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), optimizer='adam', metrics=['accuracy'])
 
 
 # In[16]:
@@ -215,15 +213,15 @@ model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=Tru
 
 #Lets create the augmentation configuration
 #This helps prevent overfitting, since we are using a small dataset
-train_datagen = ImageDataGenerator(rescale=1./255,   #Scale the image between 0 and 1
-                                    rotation_range=40,
-                                    width_shift_range=0.2,
-                                    height_shift_range=0.2,
-                                    shear_range=0.2,
-                                    zoom_range=0.2,
-                                    horizontal_flip=True,)
+#train_datagen = ImageDataGenerator(rescale=1./255,   #Scale the image between 0 and 1
+ #                                   rotation_range=40,
+  #                                  width_shift_range=0.2,
+   #                                 height_shift_range=0.2,
+    #                                shear_range=0.2,
+     #                               zoom_range=0.2,
+      #                              horizontal_flip=True,)
 
-val_datagen = ImageDataGenerator(rescale=1./255)  #We do not augment validation data. we only perform rescale
+#val_datagen = ImageDataGenerator(rescale=1./255)  #We do not augment validation data. we only perform rescale
 
 
 # In[17]:
@@ -231,18 +229,20 @@ val_datagen = ImageDataGenerator(rescale=1./255)  #We do not augment validation 
 
 
 #Create the image generators
-train_generator = train_datagen.flow(X_train, y_train, batch_size=batch_size)
-val_generator = val_datagen.flow(X_val, y_val, batch_size=batch_size)
+#train_generator = train_datagen.flow(X_train, y_train, batch_size=batch_size)
+#val_generator = val_datagen.flow(X_val, y_val, batch_size=batch_size)
 
 
 # In[18]:
 
+
+
 #The training part
 #We train for 64 epochs with about 100 steps per epoch
-history = model.fit(X_train, y_train, epochs=10, validation_data=(X_val, y_val))
+history = model.fit(X_train, y_train, epochs=5, validation_data=(X_val, y_val))
 
 
-# In[19]:
+# In[ ]:
 
 
 #Save the model
@@ -250,7 +250,8 @@ model.save_weights('model_cat&dog1_weights.h5')
 model.save('model_cat&dog1_keras.h5')
 
 
-# In[20]:
+# In[ ]:
+
 
 #lets plot the train and val curve
 #get the details form the history object
@@ -262,22 +263,23 @@ val_loss = history.history['val_loss']
 epochs = range(1, len(acc) + 1)
 
 #Train and validation accuracy
-plt.plot(epochs, acc, 'b', label='Training accurarcy')
-plt.plot(epochs, val_acc, 'r', label='Validation accurarcy')
-plt.title('Training and Validation accurarcy')
-plt.legend()
+#plt.plot(epochs, acc, 'b', label='Training accurarcy')
+#plt.plot(epochs, val_acc, 'r', label='Validation accurarcy')
+#plt.title('Training and Validation accurarcy')
+#plt.legend()
 
-plt.figure()
+#plt.figure()
+
 #Train and validation loss
-plt.plot(epochs, loss, 'b', label='Training loss')
-plt.plot(epochs, val_loss, 'r', label='Validation loss')
-plt.title('Training and Validation loss')
-plt.legend()
+#plt.plot(epochs, loss, 'b', label='Training loss')
+#plt.plot(epochs, val_loss, 'r', label='Validation loss')
+#plt.title('Training and Validation loss')
+#plt.legend()
 
-plt.show()
+#plt.show()
 
 
-# In[22]:
+# In[ ]:
 
 
 probability_model = tf.keras.Sequential([model,
@@ -285,11 +287,9 @@ probability_model = tf.keras.Sequential([model,
 
 predictions = probability_model.predict(X_test)
 
-predictions[0]
 
-np.argmax(predictions[0])
 
-y_test[0]
+
 
 def plot_image(i, predictions_array, true_label, img):
     predictions_array, true_label, img = predictions_array, true_label[i], img[i]
@@ -336,25 +336,31 @@ plt.tight_layout()
 plt.show()
 
 
-import result_run_printer as printer
-layers = 12
-model_no = 3
-pr = printer
-#printer.print_to_file(0.88, 0.65, 0.01, 0.02, 400, 12, 1)
+# In[ ]:
 
-#caculate the values from averages of the no_av last values
-v_size = len(acc)
-no_av = 5
-acc_av = 0
-val_acc_av = 0
-loss_av = 0
-val_loss_av = 0
 
-for i in range(no_av):
-    acc_av += acc[v_size-i-1]/no_av
-    val_acc_av += val_acc[v_size-i-1]/no_av
-    loss_av += loss[v_size-i-1]/no_av
-    val_loss_av += val_loss[v_size-i-1]/no_av
+probability_model = tf.keras.Sequential([model,
+                                         tf.keras.layers.Softmax()])
 
-#print the values of the run to a file
-printer.print_to_file(acc_av, val_acc_av, loss_av, val_loss_av, len(acc), layers, model_no)
+predictions = probability_model.predict(X_train)
+
+predictions[0]
+
+np.argmax(predictions[0])
+
+y_train[0]
+
+num_rows = 5
+num_cols = 3
+num_images = num_rows*num_cols
+plt.figure(figsize=(2*2*num_cols, 2*num_rows))
+for i in range(num_images):
+  plt.subplot(num_rows, 2*num_cols, 2*i+1)
+  plot_image(i, predictions[i], y_train, X_train)
+  plt.subplot(num_rows, 2*num_cols, 2*i+2)
+  plot_value_array(i, predictions[i], y_train)
+plt.tight_layout()
+plt.show()
+
+
+
