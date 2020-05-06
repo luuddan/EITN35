@@ -317,10 +317,10 @@ frames_memory
 big_counter = pd.DataFrame(0, columns=['Number'], index=labels)
 
 #Dir to be iterated
-directory_2 = 'C:/Users/eitn35/Documents/EITN35/video_files/frames'
+directory_2 = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/'
 #directory_2 = "/Users/august/Documents/EITN35_AIQ/video_files/frames/"
 directory_3 = "C:/Users/eitn35/Documents/EITN35/video_files/test_set/"
-os.chdir(directory_3)
+os.chdir(directory_2)
 
 # Create "unlabeled_images" folder if it does not exist
 try:
@@ -332,7 +332,7 @@ except OSError:
     print('Error: Creating directory of data')
 
 #MÅSTE GÖRAS LÄNGRE OM VI HITTAR MER ÄN ETT OBJEKT I VARJE BILD, GÖR HELLRE FÖR LÅNG OCH DROPPA
-annotation_df = pd.DataFrame(data=0,index=np.arange(len(os.listdir(directory_3))),columns="image xmin ymin xmax ymax label".split())
+annotation_df = pd.DataFrame(data=0,index=np.arange(len(os.listdir(directory_2))),columns="image xmin ymin xmax ymax label".split())
 index = 0
 
 # Store found objects and their positions from previous frame in vector.
@@ -340,7 +340,7 @@ index = 0
 # lf_memory = pd.DataFrame(0,columns=['Label','Middle'],index=range(10))
 
 
-for photo_filename in os.listdir(directory_3):
+for photo_filename in os.listdir(directory_2):
     if not photo_filename.endswith('jpg'):continue
     #photo_filename = 'frame_' + str(i + 8) + '.jpg'
     # define our new photoc
@@ -351,7 +351,7 @@ for photo_filename in os.listdir(directory_3):
     yhat = model.predict(image)
 
     # summarize the shape of the list of arrays
-    print([a.shape for a in yhat])
+    #print([a.shape for a in yhat])
 
     # define the anchors
     anchors = [[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]
@@ -370,57 +370,70 @@ for photo_filename in os.listdir(directory_3):
 
     contains_person = False
     #load dataframe for csv export
+
+    persons = 0
+    bikes = 0
+    dogs = 0
+
     for i in range(len(v_labels)):
-        if v_labels[i] == 'person':
-            annotation_df['image'][index] = photo_filename
-            annotation_df['xmin'][index] = v_boxes[i].xmin
-            annotation_df['ymin'][index] = v_boxes[i].ymin
-            annotation_df['xmax'][index] = v_boxes[i].xmax
-            annotation_df['ymax'][index] = v_boxes[i].ymax
-            annotation_df['label'][index] = v_labels[i]
-            index += 1
-            contains_person = True #Om vi har hittat en instance av person flytta inte file till unlabled_files
+       if v_labels[i] == 'person':
+           persons += 1
+
+       if v_labels[i] == 'bicycle':
+           bikes += 1
+
+       if v_labels[i] == 'dog':
+           dogs += 1
+
+
 
     # summarize what we found
-    temp_2_counter = check_new_object(v_labels, v_boxes, v_scores, frames_memory)
+    # temp_2_counter = check_new_object(v_labels, v_boxes, v_scores, frames_memory)
 
     # print(temp_2_counter)
-    big_counter.loc["person"] = big_counter.loc["person"] + temp_2_counter.loc["person"]
-    big_counter.loc["dog"] = big_counter.loc["dog"] + temp_2_counter.loc["dog"]
+    # big_counter.loc["person"] = big_counter.loc["person"] + temp_2_counter.loc["person"]
+    # big_counter.loc["dog"] = big_counter.loc["dog"] + temp_2_counter.loc["dog"]
 
     # draw what we found
-    draw_boxes(photo_filename, v_boxes, v_labels, v_scores)
-    print(str(big_counter))
+    # draw_boxes(photo_filename, v_boxes, v_labels, v_scores)
+    # print(str(big_counter))
 
     #move files that couldn't be labeled with YOLO
-    if (not contains_person):
+    counter = persons + bikes + dogs
+    if (counter == 0):
+
         os.rename(
-            directory_3 + photo_filename,
-            directory_3 + 'unlabeled_images/' + photo_filename
+            directory_2 + photo_filename,
+            directory_2 + 'unlabeled_images/' + 'persons_0_dogs_0_bikes_0_' + photo_filename
+        )
+    else:
+        os.rename(
+            directory_2 + photo_filename,
+            directory_2 + 'autolabeled_images/' + 'persons_' + str(persons) + '_dogs_' + str(dogs) + '_bikes_' + str(bikes) + '_' + photo_filename
         )
 
 
 
     #print("THIS IS ANNOTATIONS DF")
-    print(str(annotation_df))
-
+    #print(str(annotation_df))
+    print('labeling file '+ photo_filename)
 
 
 
 #Make CSV-file from auto-annotations
-annotation_df.to_csv('/Users/august/Documents/EITN35_AIQ/Annotations-export_YOLO_auto.csv', index=False, header=True)
+#annotation_df.to_csv('/Users/august/Documents/EITN35_AIQ/Annotations-export_YOLO_auto.csv', index=False, header=True)
 
-for labeled in os.listdir(directory_3):
-    if not labeled.endswith('jpg'): continue
-    os.rename(
-        directory_3 + labeled,
-        directory_3 + 'autolabeled_images/' + labeled
-    )
+#for labeled in os.listdir(directory_3):
+ #   if not labeled.endswith('jpg'): continue
+  #  os.rename(
+   #     directory_3 + labeled,
+    #    directory_3 + 'autolabeled_images/' + labeled
+    #)
 
 # In[90]:
 
 
-big_counter.loc['dog']
+#big_counter.loc['dog']
 
 # In[ ]:
 

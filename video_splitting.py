@@ -3,10 +3,12 @@ import numpy as np
 import os
 
 # Dir where video files to be split are located
-directory_1 = '/Users/august/Documents/EITN35_AIQ/video_files/converted'
-
+#directory_1 = '../../Documents/EITN35/video_files/converted'
+directory_1 = 'C:/Users/eitn35/Documents/EITN35/video_files/converted'
 # Dir where frames should be saved
-directory_2 = '/Users/august/Documents/EITN35_AIQ/video_files'
+#directory_2 = '../../Documents/EITN35/video_files'
+
+directory_2 = 'C:/Users/eitn35/Documents/EITN35/video_files'
 os.chdir(directory_2)
 
 # Display time stamps of saved frames and progress
@@ -52,9 +54,9 @@ def split_video(video_file):
     cv2.destroyAllWindows()
 
 #Dir where video files to be split are located
-split_directory = '/Users/august/Documents/EITN35_AIQ/video_files/converted'
 
-for video_file in os.listdir(split_directory):
+
+for video_file in os.listdir(directory_1):
     if(video_file.endswith("mp4")):
         if PRINT_DEBUG: print("Starting splitting of " + video_file + "...")
         split_video('/' + video_file)
