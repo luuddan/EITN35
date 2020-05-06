@@ -18,8 +18,10 @@ import gc #garbage collector for cleaning deleted data from memory
 # In[2]:
 
 
-train_dir = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/train_images/'
-test_dir = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/test_images/'
+#train_dir = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/train_images/'
+#test_dir = 'C:/Users/eitn35/Documents/EITN35/video_files/frames/test_images/'
+train_dir = '/Users/august/PycharmProjects/EITN35_Resources/temp_train/'
+test_dir = '/Users/august/PycharmProjects/EITN35_Resources/temp_test/'
 
 #rain_person = [train_dir+'{}'.format(i) for i in os.listdir(train_dir) if 'persons_1' in i]  #get person images
 #rain_dogs = [train_dir+'{}'.format(i) for i in os.listdir(train_dir) if 'dogs_1' in i]  #get dog images
@@ -205,7 +207,7 @@ model.summary()
 
 #We'll use the RMSprop optimizer with a learning rate of 0.0001
 #We'll use binary_crossentropy loss because its a binary classification
-model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), optimizer='adam', metrics=['accuracy'])
+model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), optimizer='adam', metrics=['acc'])
 
 
 # In[16]:
@@ -235,8 +237,6 @@ val_generator = val_datagen.flow(X_val, y_val, batch_size=batch_size)
 
 # In[18]:
 
-
-
 #The training part
 #We train for 64 epochs with about 100 steps per epoch
 history = model.fit(X_train, y_train, epochs=10, validation_data=(X_val, y_val))
@@ -251,7 +251,6 @@ model.save('model_cat&dog1_keras.h5')
 
 
 # In[20]:
-
 
 #lets plot the train and val curve
 #get the details form the history object
@@ -337,6 +336,25 @@ plt.tight_layout()
 plt.show()
 
 
+import result_run_printer as printer
+layers = 12
+model_no = 3
+pr = printer
+#printer.print_to_file(0.88, 0.65, 0.01, 0.02, 400, 12, 1)
 
+#caculate the values from averages of the no_av last values
+v_size = len(acc)
+no_av = 5
+acc_av = 0
+val_acc_av = 0
+loss_av = 0
+val_loss_av = 0
 
+for i in range(no_av):
+    acc_av += acc[v_size-i-1]/no_av
+    val_acc_av += val_acc[v_size-i-1]/no_av
+    loss_av += loss[v_size-i-1]/no_av
+    val_loss_av += val_loss[v_size-i-1]/no_av
 
+#print the values of the run to a file
+printer.print_to_file(acc_av, val_acc_av, loss_av, val_loss_av, len(acc), layers, model_no)
