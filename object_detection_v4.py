@@ -319,7 +319,7 @@ big_counter = pd.DataFrame(0, columns=['Number'], index=labels)
 #Dir to be iterated
 directory_2 = "/Users/august/Documents/EITN35_AIQ/video_files/frames/"
 directory_3 = "/Users/august/Documents/EITN35_AIQ/video_files/test_set/"
-os.chdir(directory_3)
+os.chdir(directory_2)
 
 # Create "unlabeled_images" folder if it does not exist
 try:
@@ -339,7 +339,7 @@ index = 0
 # lf_memory = pd.DataFrame(0,columns=['Label','Middle'],index=range(10))
 
 
-for photo_filename in os.listdir(directory_3):
+for photo_filename in os.listdir(directory_2):
     if not photo_filename.endswith('jpg'):continue
     #photo_filename = 'frame_' + str(i + 8) + '.jpg'
     # define our new photoc
