@@ -13,16 +13,16 @@ pip install requirements.txt
 ```
 
 ##Setup
------How to set up folders etc-------
+Put frames in two different folders, one for the test set and one for the training set. Change train_dir and test_dir to the desired path where your test and train set is located.
 
 ## Usage
-CNN_from_scratch_cats_dogs.py is the main file which trains a model a from scratch given frames of a tunnel with objects: person, bike, dog and empty tunnel
+baseline.py is the main file which trains a model from scratch given frames of a tunnel with objects: person, bike, dog and empty tunnel
 
-To run: change train_dir and test_dir to the desired path where your test and train set is located. Run the script with:
+Run the script with:
 
 
 ```bash
-CNN_from_scrath_cats_dogs.py
+baseline.py
 ```
 
 ## Contributing
