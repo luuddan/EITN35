@@ -17,7 +17,7 @@ conda create --name <NAME> --file requirements.txt
 ```
 
 ## Setup
-Organize input frames into two separate folders, one for the training set and one for the test set. Update `train_dir` and `test_dir` in `baseline.py` accordingly.
+Organize input frames into two separate folders, one for the training set and one for the test set. Update `train_dir` and `test_dir` in `CNN_baseline.py` accordingly.
 
 ## Usage
 `baseline.py` is the main file which trains a model from scratch given frames of a tunnel with objects: person, bike, dog and empty tunnel
