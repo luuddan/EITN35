@@ -4,11 +4,12 @@
 
 Training and testing an algorithm which will be used to detect persons and dogs in a tunnel.
 
+## Prerequisites
+- Anaconda
+
 ## Installation in an Anaconda Environment
 
 Create an Anaconda environment with the packages listed in requirements.txt
-
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install all the packages in requirements.txt.
 
 ```bash
 conda create --name <NAME> --file requirements.txt
