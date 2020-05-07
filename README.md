@@ -8,7 +8,7 @@ Training and testing an algorithm which will be used to detect persons and dogs 
 - Anaconda
 - CUDA-enabled GPU
 
-## Installation in an Anaconda Environment
+## Installation
 
 Create an Anaconda environment with the packages listed in requirements.txt
 
